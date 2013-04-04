@@ -12,6 +12,7 @@ describe(@"CDRSymbolicator", ^{
 
     beforeEach(^{
         symbolicator = [[[CDRSymbolicator alloc] init] autorelease];
+        fail(@"LOL");
     });
 
 #if __arm__

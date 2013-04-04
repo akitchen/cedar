@@ -40,7 +40,7 @@
     rootGroups_ = [groups retain];
     [self startObservingExamples:rootGroups_];
     startTime_ = [[NSDate alloc] init];
-    printf("Running With Random Seed: %i\n\n", seed);
+//    printf("Running With Random Seed: %i\n\n", seed);
 }
 
 - (void)runDidComplete {
@@ -130,11 +130,11 @@
 #pragma mark Private interface
 
 - (void)printMessages:(NSArray *)messages {
-    printf("\n");
-
-    for (NSString *message in messages) {
-        printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
-    }
+//    printf("\n");
+//
+//    for (NSString *message in messages) {
+//        printf("%s\n", [message cStringUsingEncoding:NSUTF8StringEncoding]);
+//    }
 }
 
 - (void)startObservingExamples:(NSArray *)examples {
@@ -209,19 +209,19 @@
             break;
     }
 
-    const char *reporterOpts = getenv("CEDAR_REPORTER_OPTS");
+//    const char *reporterOpts = getenv("CEDAR_REPORTER_OPTS");
 
-    if (reporterOpts && strcmp(reporterOpts, "nested") == 0) {
-        [self printNestedFullTextForExample:example stateToken:stateToken];
-    } else {
-        printf("%s", [stateToken cStringUsingEncoding:NSUTF8StringEncoding]);
-    }
-
-    if (getenv("CEDAR_REPORT_FAILURES_IMMEDIATELY")) {
-        if (example.state == CDRExampleStateFailed || example.state == CDRExampleStateError) {
-            printf("\n%s", [[failureMessages_ lastObject] cStringUsingEncoding:NSUTF8StringEncoding]);
-        }
-    }
+//    if (reporterOpts && strcmp(reporterOpts, "nested") == 0) {
+//        [self printNestedFullTextForExample:example stateToken:stateToken];
+//    } else {
+//        printf("%s", [stateToken cStringUsingEncoding:NSUTF8StringEncoding]);
+//    }
+//
+//    if (getenv("CEDAR_REPORT_FAILURES_IMMEDIATELY")) {
+//        if (example.state == CDRExampleStateFailed || example.state == CDRExampleStateError) {
+//            printf("\n%s", [[failureMessages_ lastObject] cStringUsingEncoding:NSUTF8StringEncoding]);
+//        }
+//    }
 }
 
 - (void)printStats {

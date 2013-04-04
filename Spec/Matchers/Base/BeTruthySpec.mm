@@ -18,7 +18,7 @@ describe(@"be_truthy matcher", ^{
 
         describe(@"which evaluates to true", ^{
             beforeEach(^{
-                value = YES;
+                value = NO;
             });
 
             describe(@"positive match", ^{
