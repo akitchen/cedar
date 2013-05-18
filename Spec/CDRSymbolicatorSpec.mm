@@ -12,7 +12,6 @@ describe(@"CDRSymbolicator", ^{
 
     beforeEach(^{
         symbolicator = [[[CDRSymbolicator alloc] init] autorelease];
-        fail(@"LOL");
     });
 
 #if __arm__
@@ -64,6 +63,10 @@ describe(@"CDRSymbolicator", ^{
             it(@"identifies file name and line number of an it", ^{
                 example = it(@"it", ^{});
                 verifyFileNameAndLineNumber(example, @"CDRSymbolicatorSpec.mm", __LINE__-1);
+            });
+            
+            it(@"should fail two levels deep", ^{
+                fail(@"OK, then");
             });
 
             it(@"identifies file name line number of a describe", ^{

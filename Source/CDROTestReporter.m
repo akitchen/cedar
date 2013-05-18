@@ -31,12 +31,17 @@
     fprintf(stderr, "Test Suite 'CDROTestReporter' started at %s\n", startTimeString);
 
     for (CDRExample *example in failedExamples_) {
-        fprintf(stderr, "Test Case '-[Spec example]' started.\n");
+        const char *exampleName =
+                [[NSString stringWithFormat:@"%@ %@", [example fullTextInPieces][0], @"ExampleName"] UTF8String];
+
+        fprintf(stderr, "Test Case '-[%s]' started.\n", exampleName);
+
         NSString *testResult =
-            [NSString stringWithFormat:@"%@:%d: error: -[Spec example] : %@ # %@",
-                example.failure.fileName, example.failure.lineNumber, example.fullText, example.failure.reason];
-        fprintf(stderr, "%s\n", [testResult cStringUsingEncoding:NSUTF8StringEncoding]);
-        fprintf(stderr, "Test Case '-[Spec example]' failed (0.001 seconds).\n");
+            [NSString stringWithFormat:@"%@:%d: error: -[%s] : %@ # %@",
+                example.failure.fileName, example.failure.lineNumber, exampleName, example.fullText, example.failure.reason];
+
+        fprintf(stderr, "%s\n", [testResult UTF8String]);
+        fprintf(stderr, "Test Case '-[%s]' failed (0.001 seconds).\n", exampleName);
     }
 
     const char *endTimeString = [[endTime_ description] cStringUsingEncoding:NSUTF8StringEncoding];
@@ -51,3 +56,11 @@
 }
 
 @end
+
+/*
+
+Test Case '-[ExampleApplicationTestsWithSenTestingKit testApplicationTestsRun]' started.
+/Users/pivotal/workspace/cedar/OCUnitAppTests/OCUnitApplicationTestsWithSenTestingKit.m:9: error: -[ExampleApplicationTestsWithSenTestingKit testApplicationTestsRun] : '1' should be equal to '2': ARRRgh
+Test Case '-[ExampleApplicationTestsWithSenTestingKit testApplicationTestsRun]' failed (0.000 seconds).
+
+*/

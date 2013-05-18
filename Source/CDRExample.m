@@ -26,6 +26,7 @@ const CDRSpecBlock PENDING = nil;
 }
 
 - (void)dealloc {
+    //TODO: shouldn't failure_ be released too?
     [block_ release];
     [super dealloc];
 }
