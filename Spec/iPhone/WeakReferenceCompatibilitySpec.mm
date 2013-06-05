@@ -37,7 +37,7 @@ describe(@"An object with a weak reference to a Cedar Double", ^{
     });
 });
 
-fdescribe(@"A UIViewController subclass compiled under ARC", ^{
+describe(@"A UIViewController subclass compiled under ARC", ^{
     __block ARCViewController *controller;
 
     beforeEach(^{
@@ -57,8 +57,6 @@ fdescribe(@"A UIViewController subclass compiled under ARC", ^{
         });
 
         it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
-            NSLog(@"================> %@", [(id)controller.someSubview sent_messages]);
-
             controller.someSubview should have_received("layoutIfNeeded");
         });
     });
