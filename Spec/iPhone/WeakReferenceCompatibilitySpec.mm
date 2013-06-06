@@ -45,20 +45,34 @@ describe(@"A UIViewController subclass compiled under ARC", ^{
         controller.view should_not be_nil;
     });
 
-    afterEach(^{
-        [NSThread sleepForTimeInterval:0.5];
-    });
-
     describe(@"spying on a weakly referred-to subview property", ^{
-        beforeEach(^{
-            spy_on(controller.someSubview);
+        NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
+        NSInteger majorVersion = [[[systemVersion componentsSeparatedByString:@"."] objectAtIndex:0] integerValue];
 
-            [controller.someSubview layoutIfNeeded];
-        });
+        if (majorVersion < 6) {
 
-        it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
-            controller.someSubview should have_received("layoutIfNeeded");
-        });
+            __block UIView *subview;
+            beforeEach(^{
+                subview = controller.someSubview;
+                spy_on(subview);
+
+                [subview layoutIfNeeded];
+            });
+
+            it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
+                subview should have_received("layoutIfNeeded");
+            });
+        } else {
+            beforeEach(^{
+                spy_on(controller.someSubview);
+
+                [controller.someSubview layoutIfNeeded];
+            });
+
+            it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
+                controller.someSubview should have_received("layoutIfNeeded");
+            });
+        }
     });
 });
 
