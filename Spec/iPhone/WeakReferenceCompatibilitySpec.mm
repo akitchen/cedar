@@ -74,6 +74,18 @@ describe(@"A UIViewController subclass compiled under ARC", ^{
             });
         }
     });
+
+    describe(@"spying on a weakly referred-to child controller", ^{
+        beforeEach(^{
+            spy_on(controller.someChildController);
+
+            [controller.someChildController isViewLoaded];
+        });
+
+        it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
+            controller.someChildController should have_received(@selector(isViewLoaded));
+        });
+    });
 });
 
 SPEC_END

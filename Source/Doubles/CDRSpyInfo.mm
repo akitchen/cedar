@@ -36,4 +36,8 @@ static NSMutableSet *currentSpies__;
     return returnedSpyInfo;
 }
 
++ (void)afterEach {
+    [currentSpies__ removeAllObjects];
+}
+
 @end

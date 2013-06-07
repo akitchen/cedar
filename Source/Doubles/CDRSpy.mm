@@ -11,8 +11,20 @@
         @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Cannot spy on nil" userInfo:nil];
     }
 
+    [self setSuperclassBasedOnInstanceClass:instance];
     [CDRSpyInfo storeSpyInfoForObject:instance];
     object_setClass(instance, self);
+}
+
++ (void)setSuperclassBasedOnInstanceClass:(id)instance {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+    if ([instance isKindOfClass:objc_getClass("UIResponder")]) {
+        class_setSuperclass(self, [NSObject class]);
+    } else {
+        class_setSuperclass(self, [NSProxy class]);
+    }
+#pragma clang diagnostic pop
 }
 
 - (id)retain {
@@ -125,7 +137,9 @@
 
 - (void)as_original_class:(void(^)())block {
     Class originalClass = [CDRSpyInfo originalClassForObject:self];
-    [self as_class:originalClass :block];
+    if (originalClass != Nil) {
+        [self as_class:originalClass :block];
+    }
 }
 
 - (Class)createTransientClassForSelector:(SEL)selector {
