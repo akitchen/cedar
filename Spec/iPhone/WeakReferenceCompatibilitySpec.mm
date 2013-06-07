@@ -37,7 +37,7 @@ describe(@"An object with a weak reference to a Cedar Double", ^{
     });
 });
 
-describe(@"A UIViewController subclass compiled under ARC", ^{
+describe(@"A UIViewController subclass compiled under ARC with weak properties", ^{
     __block ARCViewController *controller;
 
     beforeEach(^{
@@ -46,33 +46,15 @@ describe(@"A UIViewController subclass compiled under ARC", ^{
     });
 
     describe(@"spying on a weakly referred-to subview property", ^{
-        NSString *systemVersion = [[UIDevice currentDevice] systemVersion];
-        NSInteger majorVersion = [[[systemVersion componentsSeparatedByString:@"."] objectAtIndex:0] integerValue];
+        beforeEach(^{
+            spy_on(controller.someSubview);
 
-        if (majorVersion < 6) {
+            [controller.someSubview layoutIfNeeded];
+        });
 
-            __block UIView *subview;
-            beforeEach(^{
-                subview = controller.someSubview;
-                spy_on(subview);
-
-                [subview layoutIfNeeded];
-            });
-
-            it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
-                subview should have_received("layoutIfNeeded");
-            });
-        } else {
-            beforeEach(^{
-                spy_on(controller.someSubview);
-
-                [controller.someSubview layoutIfNeeded];
-            });
-
-            it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
-                controller.someSubview should have_received("layoutIfNeeded");
-            });
-        }
+        it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
+            controller.someSubview should have_received("layoutIfNeeded");
+        });
     });
 
     describe(@"spying on a weakly referred-to child controller", ^{
@@ -83,7 +65,7 @@ describe(@"A UIViewController subclass compiled under ARC", ^{
         });
 
         it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
-            controller.someChildController should have_received(@selector(isViewLoaded));
+            controller.someChildController should have_received("isViewLoaded");
         });
     });
 });
