@@ -10,21 +10,21 @@
     if (!instance) {
         @throw [NSException exceptionWithName:NSInternalInconsistencyException reason:@"Cannot spy on nil" userInfo:nil];
     }
-
-    [self setSuperclassBasedOnInstanceClass:instance];
+    [self adjustSuperclassForInstance:instance];
     [CDRSpyInfo storeSpyInfoForObject:instance];
     object_setClass(instance, self);
 }
 
-+ (void)setSuperclassBasedOnInstanceClass:(id)instance {
++ (void)adjustSuperclassForInstance:(id)instance {
+#if TARGET_OS_IPHONE
+    NSString *systemVersion = [[objc_getClass("UIDevice") performSelector:@selector(currentDevice)] performSelector:@selector(systemVersion)];
+    NSInteger majorVersion = [[[systemVersion componentsSeparatedByString:@"."] objectAtIndex:0] integerValue];
+    Class superclass = (majorVersion < 6 && [instance isKindOfClass:objc_getClass("UIResponder")]) ? [NSObject class] : [NSProxy class];
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    if ([instance isKindOfClass:objc_getClass("UIResponder")]) {
-        class_setSuperclass(self, [NSObject class]);
-    } else {
-        class_setSuperclass(self, [NSProxy class]);
-    }
+    class_setSuperclass(self, superclass);
 #pragma clang diagnostic pop
+#endif
 }
 
 - (id)retain {

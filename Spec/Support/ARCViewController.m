@@ -16,6 +16,10 @@
     AnotherARCViewController *childController = [[AnotherARCViewController alloc] init];
     [self addChildViewController:childController];
     self.someChildController = childController;
+
+    UITextField *textField = [[UITextField alloc] init];
+    [self.view addSubview:textField];
+    self.textField = textField;
 }
 
 @end

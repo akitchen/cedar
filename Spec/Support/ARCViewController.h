@@ -8,5 +8,6 @@
 
 @property (weak, nonatomic) ARCView *someSubview;
 @property (weak, nonatomic) AnotherARCViewController *someChildController;
+@property (weak, nonatomic) UITextField *textField;
 
 @end

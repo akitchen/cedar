@@ -68,6 +68,18 @@ describe(@"A UIViewController subclass compiled under ARC with weak properties",
             controller.someChildController should have_received("isViewLoaded");
         });
     });
+
+    describe(@"spying on a weakly referred-to text field", ^{
+        beforeEach(^{
+            spy_on(controller.textField);
+
+            [controller.textField becomeFirstResponder];
+        });
+
+        it(@"should allow recording of sent messages, and not blow up on dealloc", ^{
+            controller.textField should have_received("becomeFirstResponder");
+        });
+    });
 });
 
 SPEC_END
