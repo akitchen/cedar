@@ -12,5 +12,6 @@
 
 + (CedarDoubleImpl *)cedarDoubleForObject:(id)originalObject;
 + (Class)originalClassForObject:(id)originalObject;
++ (void)removeSpyForObject:(id)object;
 
 @end

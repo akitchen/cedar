@@ -48,4 +48,9 @@ static NSMutableSet *currentSpies__;
     [currentSpies__ removeAllObjects];
 }
 
++ (void)removeSpyForObject:(id)object {
+    CDRSpyInfo *spyInfo = [self spyInfoForObject:object];
+    [currentSpies__ removeObject:spyInfo];
+}
+
 @end
