@@ -104,4 +104,43 @@ describe(@"A UIViewController subclass compiled under ARC", ^{
     }
 });
 
+describe(@"A long-lived spy object not subject to the lifecycle of one spec", ^{
+    DelegateImpl *longLivedDelegate = [[[DelegateImpl alloc] init] autorelease];
+    spy_on(longLivedDelegate);
+
+    afterEach(^{
+        [(id<CedarDouble>)longLivedDelegate reset_sent_messages];
+    });
+
+    describe(@"when used in one spec", ^{
+        __block ObjectWithWeakDelegate *object;
+
+        beforeEach(^{
+            object = [[[ObjectWithWeakDelegate alloc] init] autorelease];
+            object.delegate = longLivedDelegate;
+
+            [object tellTheDelegate];
+        });
+
+        it(@"can be used once", ^{
+            longLivedDelegate should have_received(@selector(someMessage));
+        });
+    });
+
+    describe(@"when used in another spec", ^{
+        __block ObjectWithWeakDelegate *object;
+
+        beforeEach(^{
+            object = [[[ObjectWithWeakDelegate alloc] init] autorelease];
+            object.delegate = longLivedDelegate;
+
+            [object tellTheDelegate];
+        });
+
+        it(@"can be used again", ^{
+            longLivedDelegate should have_received(@selector(someMessage));
+        });
+    });
+});
+
 SPEC_END

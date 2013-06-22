@@ -7,3 +7,11 @@
 }
 
 @end
+
+@implementation DelegateImpl
+
+- (void)someMessage {
+    self.wasCalled = YES;
+}
+
+@end

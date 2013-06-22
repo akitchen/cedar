@@ -13,3 +13,9 @@
 - (void)tellTheDelegate;
 
 @end
+
+@interface DelegateImpl : NSObject<ExampleDelegate>
+
+@property (nonatomic, assign) BOOL wasCalled;
+
+@end
