@@ -1,11 +1,11 @@
 #import <Cedar/SpecHelper.h>
+#import <objc/runtime.h>
 #import "SimpleIncrementer.h"
 #import "ObjectWithForwardingTarget.h"
 #import "ArgumentReleaser.h"
 #import "ObjectWithProperty.h"
 #import "SimpleKeyValueObserver.h"
-#import "ArgumentReleaser.h"
-#import <objc/runtime.h>
+#import "ObjectWithQueue.h"
 
 extern "C" {
 #import "ExpectFailureWithMessage.h"
@@ -99,6 +99,26 @@ describe(@"spy_on", ^{
 
                 citizen should_not be_nil;
                 releaser should have_received(@selector(releaseArgument:)).with(citizen);
+            });
+        });
+
+        context(@"when the spied object is messaged by a long-lived async task", ^{
+            __block ObjectWithQueue *asyncMessenger;
+            beforeEach(^{
+                asyncMessenger = [[ObjectWithQueue alloc] init];
+                [asyncMessenger enqueueBlockAsync:^{
+                    [[NSRunLoop currentRunLoop] runUntilDate:[[NSDate date] dateByAddingTimeInterval:3]];
+                    [incrementer incrementByNumber:@123];
+                }];
+            });
+
+            fit(@"should not crash", ^{
+                //negative assertion since message will be received after teardown
+                incrementer should_not have_received(@selector(incrementByNumber:)).with(@123);
+            });
+
+            afterEach(^{
+                [asyncMessenger release];
             });
         });
     });
