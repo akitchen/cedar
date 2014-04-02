@@ -76,12 +76,20 @@ describe(@"fake (protocol)", ^{
             [fake value] should equal(99);
         });
 
-        fit(@"lets me stub with a block that takes arguments", ^{
+        fit(@"lets me stub with a block that takes object arguments", ^{
             fake stub_method(@selector(methodWithNumber1:andNumber2:)).and_do_block(^id(NSNumber *firstNum, NSNumber *secondNum){
                 return @(firstNum.floatValue + secondNum.floatValue);
             });
 
             [fake methodWithNumber1:@1 andNumber2:@2] should equal(3);
+        });
+
+        fit(@"lets me stub with a block that takes primitive arguments", ^{
+            fake stub_method(@selector(whatIfIIncrementedBy:)).and_do_block(^(size_t amount) {
+                return amount + 1;
+            });
+
+            [fake whatIfIIncrementedBy:7] should equal(8);
         });
 
         fit(@"doesn't let me stub and_do_block with arbitrary nonsense", ^{

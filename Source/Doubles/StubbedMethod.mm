@@ -136,8 +136,8 @@ namespace Cedar { namespace Doubles {
             [invocation setReturnValue:const_cast<void *>(returnValue)];
             return true;
         } else if (this->has_stub_block()) {
-            [invocation invokeUsingIMP:imp_implementationWithBlock(^(id me) {
-                return ((id(^)())stub_block_)();
+            [invocation invokeUsingIMP:imp_implementationWithBlock(^(id me, id a, id b, id c, id d, id e, id f, id g, id h, id i, id j) {
+                return ((id(^)(...))stub_block_)(a, b, c, d, e, f, g, h, i, j);
             })];
         }
         return false;
