@@ -68,6 +68,26 @@ describe(@"fake (protocol)", ^{
             [[SpecHelper specHelper].sharedExampleContext setObject:fake forKey:@"double"];
         });
 
+        fit(@"lets me stub with a block", ^{
+            fake stub_method(@selector(value)).and_do_block(^{
+                return 99;
+            });
+
+            [fake value] should equal(99);
+        });
+
+        fit(@"lets me stub with a block that takes arguments", ^{
+            fake stub_method(@selector(methodWithNumber1:andNumber2:)).and_do_block(^id(NSNumber *firstNum, NSNumber *secondNum){
+                return @(firstNum.floatValue + secondNum.floatValue);
+            });
+
+            [fake methodWithNumber1:@1 andNumber2:@2] should equal(3);
+        });
+
+        fit(@"doesn't let me stub and_do_block with arbitrary nonsense", ^{
+            ^{ fake stub_method(@selector(value)).and_do_block(@"burp"); } should raise_exception;
+        });
+
         itShouldBehaveLike(@"a Cedar double");
         itShouldBehaveLike(@"a Cedar double when used with ARC");
         itShouldBehaveLike(@"a Cedar protocol fake");

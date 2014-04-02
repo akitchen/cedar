@@ -1,18 +1,27 @@
 #import "StubbedMethod.h"
 #import "AnyArgument.h"
+#import <objc/runtime.h>
+
+@interface NSInvocation (UndocumentedPrivate)
+
+- (void)invokeUsingIMP:(IMP)imp;
+
+@end
 
 namespace Cedar { namespace Doubles {
 
-    StubbedMethod::StubbedMethod(SEL selector) : InvocationMatcher(selector), exception_to_raise_(0), invocation_block_(0) {}
-    StubbedMethod::StubbedMethod(const char * method_name) : InvocationMatcher(sel_registerName(method_name)), exception_to_raise_(0), invocation_block_(0) {}
+    StubbedMethod::StubbedMethod(SEL selector) : InvocationMatcher(selector), exception_to_raise_(0), invocation_block_(0), stub_block_(0) {}
+    StubbedMethod::StubbedMethod(const char * method_name) : InvocationMatcher(sel_registerName(method_name)), exception_to_raise_(0), invocation_block_(0), stub_block_(0) {}
     StubbedMethod::StubbedMethod(const StubbedMethod &rhs)
     : InvocationMatcher(rhs)
     , return_value_argument_(rhs.return_value_argument_)
     , invocation_block_([rhs.invocation_block_ retain])
+    , stub_block_([rhs.stub_block_ retain])
     , exception_to_raise_(rhs.exception_to_raise_) {}
 
     /*virtual*/ StubbedMethod::~StubbedMethod() {
         [invocation_block_ release];
+        [stub_block_ release];
     }
 
     StubbedMethod & StubbedMethod::and_do(invocation_block_t block) {
@@ -24,6 +33,14 @@ namespace Cedar { namespace Doubles {
         }
 
         invocation_block_ = [block copy];
+        return *this;
+    }
+
+    StubbedMethod & StubbedMethod::and_do_block(stub_block_t block) {
+        if (![block isKindOfClass:NSClassFromString(@"NSBlock")]) {
+            [[NSException exceptionWithName:NSInternalInconsistencyException reason:@"Can't do a block that isn't a block" userInfo:nil] raise];
+        }
+        stub_block_ = [block copy];
         return *this;
     }
 
@@ -118,6 +135,10 @@ namespace Cedar { namespace Doubles {
             const void * returnValue = this->return_value().value_bytes();
             [invocation setReturnValue:const_cast<void *>(returnValue)];
             return true;
+        } else if (this->has_stub_block()) {
+            [invocation invokeUsingIMP:imp_implementationWithBlock(^(id me) {
+                return ((id(^)())stub_block_)();
+            })];
         }
         return false;
     }

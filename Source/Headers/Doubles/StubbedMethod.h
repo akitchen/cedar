@@ -10,6 +10,7 @@ namespace Cedar { namespace Doubles {
     class StubbedMethod : private InvocationMatcher {
     private:
         typedef void (^invocation_block_t)(NSInvocation *);
+        typedef id stub_block_t;
 
     private:
         StubbedMethod & operator=(const StubbedMethod &);
@@ -23,6 +24,7 @@ namespace Cedar { namespace Doubles {
         template<typename T>
         StubbedMethod & and_return(const T &);
         StubbedMethod & and_do(invocation_block_t);
+        StubbedMethod & and_do_block(stub_block_t);
 
         StubbedMethod & with(const Argument::shared_ptr_t argument);
         StubbedMethod & and_with(const Argument::shared_ptr_t argument);
@@ -61,10 +63,12 @@ namespace Cedar { namespace Doubles {
     private:
         bool has_return_value() const { return return_value_argument_.get(); };
         bool has_invocation_block() const { return invocation_block_; }
+        bool has_stub_block() const { return stub_block_; }
 
     private:
         Argument::shared_ptr_t return_value_argument_;
         invocation_block_t invocation_block_;
+        stub_block_t stub_block_;
         NSObject * exception_to_raise_;
     };
 
